@@ -1,0 +1,76 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.11'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+
+	//querydsl
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+}
+
+group = 'flutter'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	//validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	//Mybatis 추가
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
+
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+	//쿼리 dsl 설정
+	implementation 'com.querydsl:querydsl-jpa'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+
+clean{
+	delete file('src/main/generated')
+}
+
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+sourceSets {
+	main.java.srcDir querydslDir
+}
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
+}

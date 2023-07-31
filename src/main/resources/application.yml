@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@my.ko2135.shop:1521:xe
+    username: app
+    password: 2135
+  jpa:
+    hibernate:
+      ddl-auto: none
+      # create일 경우 다시 테이블 생성한다 디폴트는 none
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+logging.level:
+  org.hibernate.SQL: debug
+  org:.hibernate.type: trace
+
+mybatis:
+  type-aliases-package: flutter.app.model
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    flutter:
+      app:
+        repository:
+          mybatis: trace
+
+
